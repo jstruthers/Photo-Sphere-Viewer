@@ -73,7 +73,7 @@
 </code></pre>
 </script>
 
-<svg id="patterns">
+<!-- <svg id="patterns">
   <defs>
     <pattern id="dots" x="10" y="10" width="30" height="30" patternUnits="userSpaceOnUse">
       <circle cx="10" cy="10" r="10" style="stroke: none; fill: rgba(255,0,0,0.4)" />
@@ -82,37 +82,37 @@
       <circle cx="10" cy="10" r="0.8" style="stroke: none; fill: red" />
     </pattern>
   </defs>
-</svg>
+</svg> -->
 
 <script>
   var PSV = new PhotoSphereViewer({
-    panorama: 'Bryce-Canyon-National-Park-Mark-Doliner.jpg',
+    panorama: '360_Living.jpg',
     container: 'photosphere',
     loading_img: 'photosphere-logo.gif',
     navbar: [
       'autorotate', 'zoom', 'download', 'markers',
       'spacer-1',
-      {
-        title: 'Change image',
-        className: 'custom-button',
-        content: '↻',
-        onClick: (function() {
-          var i = false;
+      // {
+      //   title: 'Change image',
+      //   className: 'custom-button',
+      //   content: '↻',
+      //   onClick: (function() {
+      //     var i = false;
 
-          return function() {
-            i = !i;
-            PSV.clearMarkers();
+      //     return function() {
+      //       i = !i;
+      //       PSV.clearMarkers();
 
-            PSV.setPanorama(i ? 'Bryce-Canyon-By-Jess-Beauchemin.jpg' : 'Bryce-Canyon-National-Park-Mark-Doliner.jpg', {
-              longitude: i ? 3.7153696451829257 : 3.8484510006474992,
-              latitude: i ? 0.57417649320975916 : -0.24434609527920628
-            }, true)
-              .then(function() {
-                PSV.setCaption(i ? 'Bryce Canyon National Park <b>&copy; Jess Beauchemin</b>' : 'Bryce Canyon National Park <b>&copy; Mark Doliner</b>');
-              });
-          }
-        }())
-      },
+      //       PSV.setPanorama(i ? 'Bryce-Canyon-By-Jess-Beauchemin.jpg' : 'Bryce-Canyon-National-Park-Mark-Doliner.jpg', {
+      //         longitude: i ? 3.7153696451829257 : 3.8484510006474992,
+      //         latitude: i ? 0.57417649320975916 : -0.24434609527920628
+      //       }, true)
+      //         .then(function() {
+      //           PSV.setCaption(i ? 'Bryce Canyon National Park <b>&copy; Jess Beauchemin</b>' : 'Bryce Canyon National Park <b>&copy; Mark Doliner</b>');
+      //         });
+      //     }
+      //   }())
+      // },
       {
         id: 'disabled',
         title: 'This button is disabled',
@@ -140,35 +140,63 @@
     },
     markers: (function(){
       var a = [];
-      for (var i=0; i<Math.PI*2; i+=Math.PI/4) {
-        for (var j=-Math.PI/2+Math.PI/4; j<Math.PI/2; j+=Math.PI/4) {
-          a.push({
-            id: '#' + a.length,
-            tooltip: '#' + a.length,
-            latitude: j,
-            longitude: i,
-            image: 'pin.png',
-            width: 32,
-            height: 32,
-            anchor: 'bottom center',
-            data: {
-              deletable: true
-            }
-          });
-        }
-      }
+      // for (var i=0; i<Math.PI*2; i+=Math.PI/4) {
+      //   for (var j=-Math.PI/2+Math.PI/4; j<Math.PI/2; j+=Math.PI/4) {
+      //     a.push({
+      //       id: '#' + a.length,
+      //       tooltip: '#' + a.length,
+      //       latitude: j,
+      //       longitude: i,
+      //       image: 'pin.png',
+      //       width: 32,
+      //       height: 32,
+      //       anchor: 'bottom center',
+      //       data: {
+      //         deletable: true
+      //       }
+      //     });
+      //   }
+      // }
 
       a.push({
         id: 'the-path',
         name: 'The path',
-        content: '<img src="pin2.png" style="width:100%"/><img src="pin.png" style="width:100%"/>',
         x: 3900,
         y: 1650,
         image: 'pin2.png',
         width: 32,
         height: 32,
-        anchor: 'bottom center'
+        anchor: 'bottom center',
+        onClick: (function() {
+          var i = false;
+          console.log('clicked');
+
+          return function() {
+            i = !i;
+            PSV.clearMarkers();
+
+            PSV.setPanorama(i ? 'Bryce-Canyon-By-Jess-Beauchemin.jpg' : 'Bryce-Canyon-National-Park-Mark-Doliner.jpg', {
+              longitude: i ? 3.7153696451829257 : 3.8484510006474992,
+              latitude: i ? 0.57417649320975916 : -0.24434609527920628
+            }, true)
+              .then(function() {
+                PSV.setCaption(i ? 'Bryce Canyon National Park <b>&copy; Jess Beauchemin</b>' : 'Bryce Canyon National Park <b>&copy; Mark Doliner</b>');
+              });
+          }
+        }())
       });
+
+      // a.push({
+      //   id: 'the-path',
+      //   name: 'The path',
+      //   content: '<img src="pin2.png" style="width:100%"/><img src="pin.png" style="width:100%"/>',
+      //   x: 3900,
+      //   y: 1650,
+      //   image: 'pin2.png',
+      //   width: 32,
+      //   height: 32,
+      //   anchor: 'bottom center'
+      // });
 
       a.push({
         id: 'lorem',
@@ -185,141 +213,143 @@
         anchor: 'bottom center'
       });
 
-      a.push({
-        id: 'gif',
-        image: 'http://strangeplanet.fr/files/avatars/sleep-round.gif',
-        width: 100,
-        height: 100,
-        x: 2060,
-        y: 960
-      });
+      // a.push({
+      //   id: 'gif',
+      //   image: 'http://strangeplanet.fr/files/avatars/sleep-round.gif',
+      //   width: 100,
+      //   height: 100,
+      //   x: 2060,
+      //   y: 960
+      // });
 
-      a.push({
-        id: 'text',
-        html: 'This <b>is</b> text <img src="pin3.png" style="height: 24px; vertical-align: top;"/>',
-        anchor: 'bottom right',
-        style: {
-          color: 'white',
-          fontSize: '20px',
-          fontFamily: 'Helvetica, sans-serif',
-          textAlign: 'center'
-        },
-        latitude: -0.2,
-        longitude: 0.5
-      });
+      // a.push({
+      //   id: 'text',
+      //   html: 'This <b>is</b> text <img src="pin3.png" style="height: 24px; vertical-align: top;"/>',
+      //   anchor: 'bottom right',
+      //   style: {
+      //     color: 'white',
+      //     fontSize: '20px',
+      //     fontFamily: 'Helvetica, sans-serif',
+      //     textAlign: 'center'
+      //   },
+      //   latitude: -0.2,
+      //   longitude: 0.5
+      // });
 
-      a.push({
-        id: 'polygon',
-        content: 'This mountain is so great it has dots on it!',
-        polygon_px: [3184,794,3268,841,3367,1194,3327,1307,3065,1221,3097,847],
-        svgStyle: {
-          fill: 'url(#points)', //'rgba(255,0,0,0.3)',
-          stroke: 'rgba(255, 0, 50, 0.8)',
-          'stroke-width': '2px'
-        },
-        tooltip: {
-          content: 'This is a mountain',
-          position: 'right bottom'
-        }
-      });
+      // a.push({
+      //   id: 'polygon',
+      //   content: 'This mountain is so great it has dots on it!',
+      //   polygon_px: [3184,794,3268,841,3367,1194,3327,1307,3065,1221,3097,847],
+      //   svgStyle: {
+      //     fill: 'url(#points)', //'rgba(255,0,0,0.3)',
+      //     stroke: 'rgba(255, 0, 50, 0.8)',
+      //     'stroke-width': '2px'
+      //   },
+      //   tooltip: {
+      //     content: 'This is a mountain',
+      //     position: 'right bottom'
+      //   }
+      // });
 
-      a.push({
-        id: 'polygon-sky',
-        svgStyle: {
-          fill: 'rgba(0, 190, 255, 0.1)'
-        },
-        polygon_rad: (function() {
-          var points = [];
+      // a.push({
+      //   id: 'polygon-sky',
+      //   svgStyle: {
+      //     fill: 'rgba(0, 190, 255, 0.1)'
+      //   },
+      //   polygon_rad: (function() {
+      //     var points = [];
 
-          for (var i = 0; i < Math.PI*2; i+= Math.PI/8) {
-            points.push(i);
-            points.push(Math.PI/8);
-          }
+      //     for (var i = 0; i < Math.PI*2; i+= Math.PI/8) {
+      //       points.push(i);
+      //       points.push(Math.PI/8);
+      //     }
 
-          return points;
-        }())
-      });
+      //     return points;
+      //   }())
+      // });
 
-      a.push({
-        id: 'circle',
-        tooltip: 'A circle of radius 30',
-        circle: 30,
-        svgStyle: {
-          fill: 'rgba(255,255,0,0.3)',
-          stroke: 'yellow',
-          'stroke-width': '2px'
-        },
-        longitude: 0,
-        latitude: -0.1,
-        anchor: 'center right'
-      });
+      // a.push({
+      //   id: 'circle',
+      //   tooltip: 'A circle of radius 30',
+      //   circle: 30,
+      //   svgStyle: {
+      //     fill: 'rgba(255,255,0,0.3)',
+      //     stroke: 'yellow',
+      //     'stroke-width': '2px'
+      //   },
+      //   longitude: 0,
+      //   latitude: -0.1,
+      //   anchor: 'center right'
+      // });
 
-      a.push({
-        id: 'ellipse',
-        tooltip: 'An ellipse of radius 60/30',
-        ellipse: [60, 30],
-        svgStyle: {
-          fill: 'rgba(255,255,0,0.3)',
-          stroke: 'yellow',
-          'stroke-width': '2px'
-        },
-        longitude: 0,
-        latitude: -0.1,
-        anchor: 'center left'
-      });
+      // a.push({
+      //   id: 'ellipse',
+      //   tooltip: 'An ellipse of radius 60/30',
+      //   ellipse: [60, 30],
+      //   svgStyle: {
+      //     fill: 'rgba(255,255,0,0.3)',
+      //     stroke: 'yellow',
+      //     'stroke-width': '2px'
+      //   },
+      //   longitude: 0,
+      //   latitude: -0.1,
+      //   anchor: 'center left'
+      // });
 
-      a.push({
-        id: 'rect',
-        tooltip: 'A square a side 60',
-        rect: [60, 60],
-        svgStyle: {
-          fill: 'rgba(255,255,0,0.3)',
-          stroke: 'yellow',
-          'stroke-width': '2px'
-        },
-        longitude: 0,
-        latitude: -0.2,
-        anchor: 'center right'
-      });
+      // a.push({
+      //   id: 'rect',
+      //   tooltip: 'A square a side 60',
+      //   rect: [60, 60],
+      //   svgStyle: {
+      //     fill: 'rgba(255,255,0,0.3)',
+      //     stroke: 'yellow',
+      //     'stroke-width': '2px'
+      //   },
+      //   longitude: 0,
+      //   latitude: -0.2,
+      //   anchor: 'center right'
+      // });
 
-      a.push({
-        id: 'path',
-        tooltip: 'A custom path',
-        path: 'M 0 0 L 60 60 L 60 0 L 0 60 L 0 0',
-        svgStyle: {
-          fill: 'rgba(255,255,0,0.3)',
-          stroke: 'yellow',
-          'stroke-width': '2px'
-        },
-        longitude: 0,
-        latitude: -0.2,
-        anchor: 'center left'
-      });
+      // a.push({
+      //   id: 'path',
+      //   tooltip: 'A custom path',
+      //   path: 'M 0 0 L 60 60 L 60 0 L 0 60 L 0 0',
+      //   svgStyle: {
+      //     fill: 'rgba(255,255,0,0.3)',
+      //     stroke: 'yellow',
+      //     'stroke-width': '2px'
+      //   },
+      //   longitude: 0,
+      //   latitude: -0.2,
+      //   anchor: 'center left'
+      // });
 
       return a;
     }())
   });
 
-  PSV.on('click', function(e) {
-    if (e.marker && !e.marker.isPolygon()) {
-      return;
-    }
-    PSV.addMarker({
-      id: '#' + Math.random(),
-      tooltip: 'Generated marker',
-      longitude: e.longitude,
-      latitude: e.latitude,
-      image: 'pin.png',
-      width: 32,
-      height: 32,
-      anchor: 'bottom center',
-      data: {
-        deletable: true
-      }
-    });
-  });
+  // PSV.on('click', function(e) {
+  //   if (e.marker && !e.marker.isPolygon()) {
+  //     return;
+  //   }
+  //   PSV.addMarker({
+  //     id: '#' + Math.random(),
+  //     tooltip: 'Generated marker',
+  //     longitude: e.longitude,
+  //     latitude: e.latitude,
+  //     image: 'pin.png',
+  //     width: 32,
+  //     height: 32,
+  //     anchor: 'bottom center',
+  //     data: {
+  //       deletable: true
+  //     }
+  //   });
+  // });
 
   PSV.on('select-marker', function(marker) {
+    console.log(marker);
+    marker.onClick();
     if (marker.data && marker.data.deletable) {
       PSV.removeMarker(marker);
     }
