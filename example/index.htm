@@ -73,18 +73,99 @@
 </code></pre>
 </script>
 
-<!-- <svg id="patterns">
-  <defs>
-    <pattern id="dots" x="10" y="10" width="30" height="30" patternUnits="userSpaceOnUse">
-      <circle cx="10" cy="10" r="10" style="stroke: none; fill: rgba(255,0,0,0.4)" />
-    </pattern>
-    <pattern id="points" x="10" y="10" width="15" height="15" patternUnits="userSpaceOnUse">
-      <circle cx="10" cy="10" r="0.8" style="stroke: none; fill: red" />
-    </pattern>
-  </defs>
-</svg> -->
-
 <script>
+
+//object for the different transitions
+// object for each room
+// method for loading and transitioning between panos
+  function InfoMark(config)
+  {
+    this.id = config.id;
+    this.image = 'pin.png';
+    this.width = 35;
+    this.height = 35;
+    this.longitude = config.long;
+    this.latitude = config.lat;
+    this.anchor = config.anchorPos || 'center left';
+    this.content = config.content || '';
+    this.tooltip = config.tooltip ? {
+      position: config.tooltip.pos || 'center left',
+      content: config.tooltip.content || this.id
+    } : {
+      position: 'center left',
+      content: this.id
+    };
+  }
+
+  function Transition(config)
+  {
+    InfoMark.call( this, config );
+    this.image = 'pin2.png';
+    this.pano = {
+      url: config.pano.url,
+      caption: config.pano.caption
+    },
+    this.markers = config.markers;
+  }
+
+  // Transition to this image
+  Transition.prototype.loadPano = function(lat, long)
+  {
+    PSV.setPanorama(
+          this.pano.url,
+          {
+            latitude: lat,
+            longitude: long
+          },
+          true).then(function() {
+            PSV.clearMarkers()
+            this.markers.forEach(function(m, i) { PSV.addMarker(m); });
+            PSV.setCaption(this.pano.caption);
+          }.bind(this));
+  }
+
+  var markers = {
+        fireplace: new InfoMark({
+          id: 'fireplace',
+          long: 6.25,
+          lat: Math.PI * 2,
+          content: 'A nice house warming gift'
+        })
+      },
+      rooms = {
+        living: new Transition({
+          id: 'living',
+          long: 0.6,
+          lat: Math.PI * 2,
+          tooltip: {
+            pos: 'center',
+            content: 'move to Living room'
+          },
+          pano: {
+            url: '360_Living.jpg',
+            caption: 'The Living Room',
+          }
+        }),
+        kitchen: new Transition({
+          id: 'kitchen',
+          long: 0.5,
+          lat: Math.PI * 2,
+          tooltip: {
+            pos: 'center left',
+            content: 'move to kitchen'
+          },
+          pano: {
+            url: '360_Kitchen.jpg',
+            caption: 'The Kitchen',
+          }
+        }),
+      };
+  rooms.living.markers = [
+    rooms.kitchen,
+    markers.fireplace
+  ];
+  rooms.kitchen.markers = [ rooms.living ];
+
   var PSV = new PhotoSphereViewer({
     panorama: '360_Living.jpg',
     container: 'photosphere',
@@ -92,27 +173,6 @@
     navbar: [
       'autorotate', 'zoom', 'download', 'markers',
       'spacer-1',
-      // {
-      //   title: 'Change image',
-      //   className: 'custom-button',
-      //   content: '↻',
-      //   onClick: (function() {
-      //     var i = false;
-
-      //     return function() {
-      //       i = !i;
-      //       PSV.clearMarkers();
-
-      //       PSV.setPanorama(i ? 'Bryce-Canyon-By-Jess-Beauchemin.jpg' : 'Bryce-Canyon-National-Park-Mark-Doliner.jpg', {
-      //         longitude: i ? 3.7153696451829257 : 3.8484510006474992,
-      //         latitude: i ? 0.57417649320975916 : -0.24434609527920628
-      //       }, true)
-      //         .then(function() {
-      //           PSV.setCaption(i ? 'Bryce Canyon National Park <b>&copy; Jess Beauchemin</b>' : 'Bryce Canyon National Park <b>&copy; Mark Doliner</b>');
-      //         });
-      //     }
-      //   }())
-      // },
       {
         id: 'disabled',
         title: 'This button is disabled',
@@ -123,9 +183,7 @@
       'gyroscope',
       'fullscreen'
     ],
-    caption: 'Bryce Canyon National Park <b>&copy; Mark Doliner</b>',
-    longitude_range: [-7*Math.PI/8, 7*Math.PI/8],
-    latitude_range: [-3*Math.PI/4, 3*Math.PI/4],
+    caption: '<i>The Living Room</i>',
     anim_speed: '-2rpm',
     default_fov: 50,
     fisheye: true,
@@ -139,227 +197,16 @@
       blur: true
     },
     markers: (function(){
-      var a = [];
-      // for (var i=0; i<Math.PI*2; i+=Math.PI/4) {
-      //   for (var j=-Math.PI/2+Math.PI/4; j<Math.PI/2; j+=Math.PI/4) {
-      //     a.push({
-      //       id: '#' + a.length,
-      //       tooltip: '#' + a.length,
-      //       latitude: j,
-      //       longitude: i,
-      //       image: 'pin.png',
-      //       width: 32,
-      //       height: 32,
-      //       anchor: 'bottom center',
-      //       data: {
-      //         deletable: true
-      //       }
-      //     });
-      //   }
-      // }
-
-      a.push({
-        id: 'the-path',
-        name: 'The path',
-        x: 3900,
-        y: 1650,
-        image: 'pin2.png',
-        width: 32,
-        height: 32,
-        anchor: 'bottom center',
-        onClick: (function() {
-          var i = false;
-          console.log('clicked');
-
-          return function() {
-            i = !i;
-            PSV.clearMarkers();
-
-            PSV.setPanorama(i ? 'Bryce-Canyon-By-Jess-Beauchemin.jpg' : 'Bryce-Canyon-National-Park-Mark-Doliner.jpg', {
-              longitude: i ? 3.7153696451829257 : 3.8484510006474992,
-              latitude: i ? 0.57417649320975916 : -0.24434609527920628
-            }, true)
-              .then(function() {
-                PSV.setCaption(i ? 'Bryce Canyon National Park <b>&copy; Jess Beauchemin</b>' : 'Bryce Canyon National Park <b>&copy; Mark Doliner</b>');
-              });
-          }
-        }())
-      });
-
-      // a.push({
-      //   id: 'the-path',
-      //   name: 'The path',
-      //   content: '<img src="pin2.png" style="width:100%"/><img src="pin.png" style="width:100%"/>',
-      //   x: 3900,
-      //   y: 1650,
-      //   image: 'pin2.png',
-      //   width: 32,
-      //   height: 32,
-      //   anchor: 'bottom center'
-      // });
-
-      a.push({
-        id: 'lorem',
-        tooltip: {
-          content: 'Lorem ipsum dolor ist amet et consecturo.',
-          position: 'bottom right'
-        },
-        content: document.getElementById('pin-content').innerHTML,
-        latitude: 0,
-        longitude: 0.20,
-        image: 'pin2.png',
-        width: 32,
-        height: 32,
-        anchor: 'bottom center'
-      });
-
-      // a.push({
-      //   id: 'gif',
-      //   image: 'http://strangeplanet.fr/files/avatars/sleep-round.gif',
-      //   width: 100,
-      //   height: 100,
-      //   x: 2060,
-      //   y: 960
-      // });
-
-      // a.push({
-      //   id: 'text',
-      //   html: 'This <b>is</b> text <img src="pin3.png" style="height: 24px; vertical-align: top;"/>',
-      //   anchor: 'bottom right',
-      //   style: {
-      //     color: 'white',
-      //     fontSize: '20px',
-      //     fontFamily: 'Helvetica, sans-serif',
-      //     textAlign: 'center'
-      //   },
-      //   latitude: -0.2,
-      //   longitude: 0.5
-      // });
-
-      // a.push({
-      //   id: 'polygon',
-      //   content: 'This mountain is so great it has dots on it!',
-      //   polygon_px: [3184,794,3268,841,3367,1194,3327,1307,3065,1221,3097,847],
-      //   svgStyle: {
-      //     fill: 'url(#points)', //'rgba(255,0,0,0.3)',
-      //     stroke: 'rgba(255, 0, 50, 0.8)',
-      //     'stroke-width': '2px'
-      //   },
-      //   tooltip: {
-      //     content: 'This is a mountain',
-      //     position: 'right bottom'
-      //   }
-      // });
-
-      // a.push({
-      //   id: 'polygon-sky',
-      //   svgStyle: {
-      //     fill: 'rgba(0, 190, 255, 0.1)'
-      //   },
-      //   polygon_rad: (function() {
-      //     var points = [];
-
-      //     for (var i = 0; i < Math.PI*2; i+= Math.PI/8) {
-      //       points.push(i);
-      //       points.push(Math.PI/8);
-      //     }
-
-      //     return points;
-      //   }())
-      // });
-
-      // a.push({
-      //   id: 'circle',
-      //   tooltip: 'A circle of radius 30',
-      //   circle: 30,
-      //   svgStyle: {
-      //     fill: 'rgba(255,255,0,0.3)',
-      //     stroke: 'yellow',
-      //     'stroke-width': '2px'
-      //   },
-      //   longitude: 0,
-      //   latitude: -0.1,
-      //   anchor: 'center right'
-      // });
-
-      // a.push({
-      //   id: 'ellipse',
-      //   tooltip: 'An ellipse of radius 60/30',
-      //   ellipse: [60, 30],
-      //   svgStyle: {
-      //     fill: 'rgba(255,255,0,0.3)',
-      //     stroke: 'yellow',
-      //     'stroke-width': '2px'
-      //   },
-      //   longitude: 0,
-      //   latitude: -0.1,
-      //   anchor: 'center left'
-      // });
-
-      // a.push({
-      //   id: 'rect',
-      //   tooltip: 'A square a side 60',
-      //   rect: [60, 60],
-      //   svgStyle: {
-      //     fill: 'rgba(255,255,0,0.3)',
-      //     stroke: 'yellow',
-      //     'stroke-width': '2px'
-      //   },
-      //   longitude: 0,
-      //   latitude: -0.2,
-      //   anchor: 'center right'
-      // });
-
-      // a.push({
-      //   id: 'path',
-      //   tooltip: 'A custom path',
-      //   path: 'M 0 0 L 60 60 L 60 0 L 0 60 L 0 0',
-      //   svgStyle: {
-      //     fill: 'rgba(255,255,0,0.3)',
-      //     stroke: 'yellow',
-      //     'stroke-width': '2px'
-      //   },
-      //   longitude: 0,
-      //   latitude: -0.2,
-      //   anchor: 'center left'
-      // });
-
-      return a;
-    }())
+      rooms.living.markers.forEach(function(m) {console.log(m);});
+      return rooms.living.markers;
+    })()
   });
 
-  // PSV.on('click', function(e) {
-  //   if (e.marker && !e.marker.isPolygon()) {
-  //     return;
-  //   }
-  //   PSV.addMarker({
-  //     id: '#' + Math.random(),
-  //     tooltip: 'Generated marker',
-  //     longitude: e.longitude,
-  //     latitude: e.latitude,
-  //     image: 'pin.png',
-  //     width: 32,
-  //     height: 32,
-  //     anchor: 'bottom center',
-  //     data: {
-  //       deletable: true
-  //     }
-  //   });
-  // });
-
-  PSV.on('select-marker', function(marker) {
-    console.log(marker);
-    marker.onClick();
-    if (marker.data && marker.data.deletable) {
-      PSV.removeMarker(marker);
-    }
-    else if (marker.id === 'gif') {
-      var width = (Math.random()*0.4 + 0.8) * marker.width;
-      PSV.updateMarker({
-        id: marker.id,
-        width: width,
-        height: width
-      });
+  PSV.on('select-marker', function(marker)
+  {
+    console.log('select marker', marker)
+    if (rooms[marker.id].loadPano) {
+      rooms[marker.id].loadPano(Math.PI * 2, Math.PI * 2);
     }
   });
 </script>
